@@ -13,11 +13,14 @@ Usando o binário [buf1](./buf1) você deverá se aproveitar do mau uso da funç
 
 2. Qual o tamanho do buffer de "Seja bem vindo!"?
    
-   **RESPOSTA:** A string "Seja bem vindo!", contando o char 0x00 que indica final de string, ocupa 16 bytes de -38(%ebp) até -22(%ebp). No entanto, os bytes de -22(%ebp) até -8(%ebp) sao preenchidos com o valor zero. Portanto, podemos assumir que esse buffer possui 38 - 8 = 30 bytes.
+   **RESPOSTA:** A string "Seja bem vindo!", contando o char NUL que indica final de string, ocupa 16 bytes de -38(%ebp) até -22(%ebp). No entanto, os bytes de -22(%ebp) até -8(%ebp) sao preenchidos com o valor zero. Portanto, podemos assumir que esse buffer possui 38 - 8 = 30 bytes.
    
 3. Por que o primeiro print só para depois de "Tchau, mundo cruel"?
+   
+   **RESPOSTA:** Porque a funçao gets so para de ler a string depois de encontrar o char NUL, independentemente do tamanho definido para o buffer. E é so depois de "Tchau, mundo cruel" que o programa encontra esse char. 
 
 ### Observações:
+Para facilitar a geraçao da string que causaria um buffer overflow, usamos um pequeno script em python (desafio01.py). Basicamente ele gera uma string cujos primeiros 100 bytes sao chars 'a' para ocupar todo espaço destinado ao buffer original do gets. Esses 100 'a's sao seguidos dos chars 'Tchau, mundo cruel' que sobrescrevem a mensagem "Seja bem vindo!". Em vez de 'a' também poderiamos usar um char como '\1', que representa um caracter especial do ASCII que nao é printado no terminal.
 
 ## Segundo desafio
 Nesse desafio, encontrado em [buf2](./buf2), um pouco mais complexo, você deverá se aproveitar novamente do mau uso da função `gets()` para executar uma função que nunca é chamada no programa. Ou seja, apesar da função `codigo_morto` nunca ser chamada, você se aproveitará do buffer overflow para fazê-la ser executada.
