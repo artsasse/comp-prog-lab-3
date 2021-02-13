@@ -26,8 +26,14 @@ Para facilitar a geraçao da string que causaria um buffer overflow, usamos um p
 Nesse desafio, encontrado em [buf2](./buf2), um pouco mais complexo, você deverá se aproveitar novamente do mau uso da função `gets()` para executar uma função que nunca é chamada no programa. Ou seja, apesar da função `codigo_morto` nunca ser chamada, você se aproveitará do buffer overflow para fazê-la ser executada.
 
 ### Responda:
-1. Qual endereço do código morto?
+1. Qual endereço do código morto? 
+   
+   **RESPOSTA:** O codigo morto (0x08049196) se encontra 43 bytes antes do codigo de main (0x080491c1).
+
 2. Qual o tamanho do buffer de leitura?
+   
+   **RESPOSTA:** O buffer de leitura ocupa o espaço de -72(%ebp) até -8(%ebp). Logo seu tamanho é 72 - 8 = 64 bytes.
+
 3. Para onde aponta o ebp? E o `eip` de retorno da função que chama `main`?
 4. Quantos bytes deve-se escrever até conseguir sobrescrever `eip`?
 5. Qual valor deverá receber ser colocado para que eip aponte agora para `codigo_morto`?
