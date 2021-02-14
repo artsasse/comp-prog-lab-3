@@ -49,20 +49,10 @@ Nesse desafio, encontrado em [buf2](./buf2), um pouco mais complexo, você dever
 
 6. Por que o programa não termina normalmente após ser explorado?
 
-   **RESPOSTA:** Porque o controle nunca retorna para o sistema operacional.
+   **RESPOSTA:** Porque o controle nunca retorna para o sistema operacional como era esperado. Além disso, o sistema também percebe que estamos acessando uma parte da memoria que não deveria ser acessada ("Segmentation Fault: core dumped). Inclusive, só conseguimos executar o código morto dentro do gdb.
 
-Dica importante: para conseguir inserir o endereço no binário, você deve inserí-lo em forma de *shellcode*. Pra isso, você pode usar um script em Python, do tipo:
-```python
-import struct
-print(struct.pack("I", 0x08040000))
-```
-
-Rode esse programa conectando a saída padrão dele à entrada padrão do binário:
-```bash
-python exploit.py | ./buf2
-```
-
-Claro, um `exploit.py` só com o conteúdo acima não irá funcionar, pois você ainda precisará adicionar os bytes pra escrever o buffer inteiro e chegar até onde o `EIP` da função que chama a `main` está localizado.
+### Observações:
+Para facilitar a geração da arquivo binario que causaria um buffer overflow, usamos um pequeno script em python (`desafio2.py`). Usamos o comando `run < exploit.bin` para rodar o programa dentro do gdb. Basicamente ele gera uma string cujos primeiros 64 bytes sao chars 'a' para ocupar todo espaço destinado ao buffer original do gets. Esses 64 'a's são seguidos de 4 bytes que correspondem ao endereço de %ebp + 8. Esses 4 bytes serão carregados em %ecx ao final do programa e usados como referência para determinar onde está o RIP SO. Depois disso adicionamos mais 8 'a's e finalmente mais 4 bytes, correspondentes ao endereço da função código morto.
 
 ## Terceiro desafio
 Nesse último desafio, [buf3](./buf3), mais uma vez temos um programa utilizando `gets()` indevidamente, mas, diferentemente do desafio anterior, você não terá nenhuma função para executar. Dessa vez, você deverá inserir *shellcode* na pilha e fazer seu programa executá-lo. Assim, se bem sucedido, você deverá conseguir acesso a uma shell.
