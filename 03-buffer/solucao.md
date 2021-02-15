@@ -52,11 +52,12 @@ Nesse desafio, encontrado em [buf2](./buf2), um pouco mais complexo, você dever
    **RESPOSTA:** Porque o controle nunca retorna para o sistema operacional como era esperado. Além disso, o sistema também percebe que estamos acessando uma parte da memoria que não deveria ser acessada ("Segmentation Fault: core dumped). Inclusive, só conseguimos executar o código morto dentro do gdb.
 
 ### Observações:
-Para facilitar a geração da arquivo binario que causaria um buffer overflow, usamos um pequeno script em python (`desafio2.py`). Usamos o comando `run < exploit.bin` para rodar o programa dentro do gdb. Basicamente ele gera uma string cujos primeiros 64 bytes sao chars 'a' para ocupar todo espaço destinado ao buffer original do gets. Esses 64 'a's são seguidos de 4 bytes que correspondem ao endereço de %ebp + 8. Esses 4 bytes serão carregados em %ecx ao final do programa e usados como referência para determinar onde está o RIP SO. Depois disso adicionamos mais 8 'a's e finalmente mais 4 bytes, correspondentes ao endereço da função código morto.
+Para facilitar a geração da arquivo binario que causaria um buffer overflow, usamos um pequeno script em python (`desafio2.py`). Usamos o comando `run < exploit.bin` para rodar o programa dentro do gdb. Basicamente ele gera uma string cujos primeiros 64 bytes sao chars 'a' para ocupar todo espaço destinado ao buffer original do gets. Esses 64 'a's são seguidos de 4 bytes que correspondem ao endereço de %ebp + 8. Esses 4 bytes serão carregados em %ecx ao final do programa e usados como referência para determinar onde está o RIP SO. Depois disso adicionamos mais 8 'a's (ou 24) e finalmente mais 4 bytes, correspondentes ao endereço da função código morto.
 
 ## Terceiro desafio
 Nesse último desafio, [buf3](./buf3), mais uma vez temos um programa utilizando `gets()` indevidamente, mas, diferentemente do desafio anterior, você não terá nenhuma função para executar. Dessa vez, você deverá inserir *shellcode* na pilha e fazer seu programa executá-lo. Assim, se bem sucedido, você deverá conseguir acesso a uma shell.
 
-Novamente, destaque tudo que for importante durante a resolução do desafio no relatório.
+### Observações:
+Podemos verificar pelo disassembly, que o buffer de gets tem 32 bytes e na posição %ebp - 8 está o valor que vai ser restaurado para %ecx perto do final do programa. Novamente, o conteúdo de %ecx será importante para manipular o conteúdo de %eip.
+Pensamos numa soluçao parecida com a do segundo desafio, mas em vez de sobrescrever o espaço onde estava o RIP SO com o endereço de codigo_morto, sobrescrevemos com um endereço 4 bytes acima, onde começa a série de NOPs que levam até o shellcode. Usamos o script desafio3.py para nos ajudar nessa tarefa.
 
-O shellcode a ser inserido para executar uma shell pode ser encontrado [aqui](http://shell-storm.org/shellcode/).
